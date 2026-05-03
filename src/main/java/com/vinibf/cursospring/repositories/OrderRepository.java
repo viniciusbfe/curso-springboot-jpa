@@ -1,0 +1,7 @@
+package com.vinibf.cursospring.repositories;
+
+import com.vinibf.cursospring.entities.Order;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface OrderRepository extends JpaRepository<Order, Integer> {
+}
