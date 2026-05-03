@@ -2,6 +2,7 @@ package com.vinibf.cursospring.config;
 
 import com.vinibf.cursospring.entities.Order;
 import com.vinibf.cursospring.entities.User;
+import com.vinibf.cursospring.entities.enums.OrderStatus;
 import com.vinibf.cursospring.repositories.OrderRepository;
 import com.vinibf.cursospring.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,9 @@ public class TestConfig implements CommandLineRunner {
         User user2 = new User(null, "User2", "User2@gmail.com", "22222222", "senha2");
 
 
-        Order o1 = new Order(null, Instant.parse("2019-06-20T19:53:07Z"), user1);
-        Order o2 = new Order(null, Instant.parse("2019-07-21T03:42:10Z"), user2);
-        Order o3 = new Order(null, Instant.parse("2019-07-22T15:21:22Z"), user1);
+        Order o1 = new Order(null, Instant.parse("2019-06-20T19:53:07Z"), OrderStatus.PAID, user1);
+        Order o2 = new Order(null, Instant.parse("2019-07-21T03:42:10Z"), OrderStatus.WAITING_PAYMENT, user2);
+        Order o3 = new Order(null, Instant.parse("2019-07-22T15:21:22Z"), OrderStatus.PAID, user1);
 
 
         userRepository.saveAll(Arrays.asList(user1, user2));
