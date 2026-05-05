@@ -2,7 +2,12 @@ package com.vinibf.cursospring.services;
 
 import com.vinibf.cursospring.entities.User;
 import com.vinibf.cursospring.repositories.UserRepository;
+import com.vinibf.cursospring.services.exceptions.DatabaseExcpetion;
+import com.vinibf.cursospring.services.exceptions.ResourceNotFoundExcpetion;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +24,7 @@ public class UserService {
     }
 
     public User findByID(Integer id){
-        return repository.findById(id).orElseThrow(() -> new RuntimeException("User not found."));
+        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundExcpetion(id));
     }
 
     public User insertUser(User user){
@@ -27,13 +32,25 @@ public class UserService {
     }
 
     public void deleteUser(Integer id){
-        repository.deleteById(id);
+        if (!repository.existsById(id)) {
+            throw new ResourceNotFoundExcpetion(id);
+        }
+
+        try {
+            repository.deleteById(id);
+        } catch (DataIntegrityViolationException e){
+            throw new DatabaseExcpetion("Não é possível excluir o usuário pois existem dados relacionados.");
+        }
     }
 
-    public User updateUser(Integer id, User user){
-        User entity = repository.getReferenceById(id);
-        updateData(entity, user);
-        return repository.save(entity);
+    public User updateUser(Integer id, User obj) {
+        try {
+            User entity = repository.getReferenceById(id);
+            updateData(entity, obj);
+            return repository.save(entity);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundExcpetion(id);
+        }
     }
 
     private void updateData(User entity, User user) {
